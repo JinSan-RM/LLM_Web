@@ -6,20 +6,35 @@ OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 
 client = OpenAI()
 
-class CompletionGPT:
-    def __init__(self, host, text):
-        self._host = host
-        self._text = text
+# class CompletionGPT:
+#     def __init__(self, host, text):
+#         self._host = host
+#         self._text = text
 
-def PDF_Menu_Create(text):
+def PDF_Menu_Create_G(text):
     truncated_text = truncate_text_to_token_limit(text)
     completion = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "- You are the organizer of the company introduction website. \n- Data is a company introduction letter or product introduction letter. \n- The result values will be printed in two ways. One is to draw 10 submenus in a tree structure. The other is to write down what goes into each menu"},
-            {"role": "user", "content": truncated_text},
-            {"role": "assistant", "content": "Understood. I will help you create a structured web header menu based on the contents you provide. I will ensure that the submenus are logically related to the main menus, and the entire structure will be clear and organized, with a maximum of 10 items in a tree format."},
-            # {"role": "user", "content": }
+            {
+                "role": "system",
+                "content": "You are the organizer of the company introduction website."
+            },
+            {
+                "role": "user",
+                "content": truncated_text
+            },
+            {
+                "role": "assistant",
+                "content": "Understood. I will help you create a structured web header menu based on the contents you provide. I will ensure that the submenus are logically related to the main menus, and the entire structure will be clear and organized, with a maximum of 10 items in a tree format."
+            },
+            {
+                "role": "system",
+                "content": "You will perform two tasks: 1) Extract the main keywords from the text. 2) Write a brief introduction based on the text."
+            }
+            # {"role": "system", "content": "- You are the organizer of the company introduction website. \n- Data is a company introduction letter or product introduction letter. \n- The result values will be printed in two ways. One is to draw 10 submenus in a tree structure. The other is to write down what goes into each menu"},
+            # {"role": "user", "content": truncated_text},
+            # {"role": "assistant", "content": "Understood. I will help you create a structured web header menu based on the contents you provide. I will ensure that the submenus are logically related to the main menus, and the entire structure will be clear and organized, with a maximum of 10 items in a tree format."},
         ],
         temperature=0.1,
         max_tokens=300,
