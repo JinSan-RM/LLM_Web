@@ -1,0 +1,6 @@
+fastapi
+openai
+PyMuPDF
+uvicorn
+requests
+tiktoken
