@@ -7,6 +7,7 @@ OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 client = OpenAI()
 
 
+
 tree_structure = """- You can use this kind of structure when build a tree structure.
                     C:.
                     ├─Main
