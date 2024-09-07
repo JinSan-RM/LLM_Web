@@ -63,10 +63,11 @@ class CompletionClova:
             'Accept': 'text/event-stream'
         }
 
+# NOTE : stream option을 False로 해도 동일하게 형태소 형태 나옴
         response = requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
                                 headers=headers, json=completion_request, stream=False)
         response_text = response.text
-        print(response_text)
+        # print(response_text)
         return response_text  # 이 부분에서 response_text를 반환
 
 def PDF_Menu_Create_C(text):
