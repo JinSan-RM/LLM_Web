@@ -66,7 +66,7 @@ class CompletionClova:
         response = requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
                                 headers=headers, json=completion_request, stream=False)
         response_text = response.text
-        print(response_text)
+        
         return response_text  # 이 부분에서 response_text를 반환
 
 def PDF_Menu_Create_C(text):
