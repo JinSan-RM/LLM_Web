@@ -60,12 +60,12 @@ class CompletionGPT:
         self._text = text
 
 def PDF_Menu_Create_G(text):
-    truncated_text = truncate_text_to_token_limit(text)
+    # truncated_text = truncate_text_to_token_limit(text)
     completion = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "- You are the organizer of the company introduction website. \n- Data is a company introduction letter or product introduction letter. \n- The result values will be printed in two ways. One is to draw 10 submenus in a tree structure. The other is to write down what goes into each menu"},
-            {"role": "user", "content": truncated_text},
+            {"role": "user", "content": text},
             {"role": "assistant", "content": f"{tree_structure}, {content_structure}"}
             # ,{
             # "role": "system",
