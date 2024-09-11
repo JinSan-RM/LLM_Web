@@ -8,23 +8,26 @@ client = OpenAI()
 
 
 
-tree_structure = """- You can use this kind of structure when build a tree structure.
-                    C:.
-                    ├─Main
-                    ├─About Us
-                    │  ├─CEO's Message
-                    │  ├─Organization Chart
-                    │  └─Directions
-                    │
-                    ├─Business Overview
-                    │   ├─Business Areas
-                    │   ├─Business Achievements
-                    │   └─Product Introduction
-                    │
-                    └─Customer Service
-                        ├─Notices
-                        ├─Customer Inquiries
-                        └─FAQ"""
+menu_structure = """- You can use this kind of structure when build two-depth menus. start with 'number' is first_depth menu. start with '-' is second_depth menu.
+                    1. Home
+                    2. Company Introduction   
+                            - Company History   
+                            - Company Vision   
+                            - CEO Message
+                    3. Business Overview   
+                            - Business Areas
+                            - Business Achievements
+                            - Future Goals
+                    4. Team   
+                            - Team Members   
+                    5. Representative Contents   
+                            - Education Methodology   
+                            - Sejong Institute Content   
+                    6. Contact Us   
+                            - Location   
+                            - Phone   
+                            - Fax
+                    7. FAQs"""
 
 content_structure = """ - You can use this when make contents of menues
                     1. Main
@@ -64,16 +67,21 @@ def PDF_Menu_Create_G(text):
     completion = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "- You are the organizer of the company introduction website. \n- Data is a company introduction letter or product introduction letter. \n- The result values will be printed in two ways. One is to draw 10 submenus in a tree structure. The other is to write down what goes into each menu"},
+            {"role": "system", "content": """- You are the organizer of the company introduction website. 
+             - Data is a company introduction letter or product introduction letter. 
+             - The result values will be printed in two ways.
+             - One is to write first_depth menu with second_depth menus refer to menu_structure in assistant. The total number of second_depth menus must be 10. Don't need to write extra explaination about second_depth. the length of menus should be less than 15 letters.
+             - The other is pick 3 keywords in the contents.
+             - Write in Korean."""}, # 
             {"role": "user", "content": text},
-            {"role": "assistant", "content": f"{tree_structure}, {content_structure}"}
+            {"role": "assistant", "content": f"{menu_structure}"} # {content_structure}
             # ,{
             # "role": "system",
             # "content": "You will perform two tasks: 1) Extract the main keywords from the text. 2) Write a brief introduction based on the text."
             # },
             # {"role": "user", "content": }
         ],
-        temperature=0.1,
+        temperature=0.2,
         max_tokens=200,
         top_p=1
     )
@@ -84,11 +92,11 @@ def truncate_text_to_token_limit(text, max_tokens=9800):
     # tiktoken을 사용해 텍스트의 토큰 수를 계산하고 자르기
     gpt4_tokenizer = tiktoken.get_encoding("cl100k_base") # GPT4 tokenizer = cl100k_base
     gpt4_tokens = gpt4_tokenizer.encode(text)
-    print("Gpt4_tokens = ", gpt4_tokens)
+    print("Gpt4_tokens = ", len(gpt4_tokens))
 
     gpt4o_tokenizer = tiktoken.get_encoding("o200k_base") # GPT4o tokenizer = o200k_base 
     gpt4o_tokens = gpt4o_tokenizer.encode(text)
-    print("Gpt4_tokens = ", gpt4o_tokens)
+    print("Gpt4o_tokens = ", len(gpt4o_tokens))
     print("[INFO] We use Gpt4o_tokens")
     if len(gpt4o_tokens) > max_tokens:
         gpt4o_tokens = gpt4o_tokens[:max_tokens]

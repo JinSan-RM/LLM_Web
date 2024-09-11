@@ -12,7 +12,6 @@ def main(path: str, path2: str='', path3: str=''):
     pdf_list = []
     response = requests.get(path)
 
-
     if response.status_code == 200:
         pdf_data = BytesIO(response.content)
         pdf_list.append(pdf_data)
@@ -28,24 +27,11 @@ def main(path: str, path2: str='', path3: str=''):
             pdf_data3 = BytesIO(response3.content)
             pdf_list.append(pdf_data3)
         
-        text = PDF2TEXT(pdf_list)
-        pdf_list.append(pdf_data)
+        all_text = PDF2TEXT(pdf_list)
+
+        truncated_text = truncate_text_to_token_limit(all_text)
         
-        if path2 != ''  :
-        # print("path2 : ", path2)
-            response2 = requests.get(path2)
-            pdf_data2 = BytesIO(response2.content)
-            pdf_list.append(pdf_data2)
-        if path3 != '' :
-        # print("path3 : ", path3)
-            response3 = requests.get(path3)
-            pdf_data3 = BytesIO(response3.content)
-            pdf_list.append(pdf_data3)
-        
-        text = PDF2TEXT(pdf_list)
-        text = truncate_text_to_token_limit(text)
-<<<<<<< HEAD
-        G_data = PDF_Menu_Create_G(text)
+        G_data = PDF_Menu_Create_G(truncated_text)
         # C_data = PDF_Menu_Create_C(text)
         return {"message": "PDF 다운로드 및 처리 성공", "GPT": G_data} # "Clova":C_data
     else:
