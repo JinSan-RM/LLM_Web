@@ -1,4 +1,5 @@
 import fitz
+import tiktoken
 
 def PDF2TEXT(pdf_list):
     total_text = ""
@@ -32,3 +33,19 @@ def PDF2TEXT(pdf_list):
                 #     img_file.write(image_bytes)
 
     return total_text
+
+def truncate_text_to_token_limit(text, max_tokens=9800):
+    # tiktoken을 사용해 텍스트의 토큰 수를 계산하고 자르기
+    gpt4_tokenizer = tiktoken.get_encoding("cl100k_base") # GPT4 tokenizer = cl100k_base
+    gpt4_tokens = gpt4_tokenizer.encode(text)
+    print("Gpt4_tokens = ", len(gpt4_tokens))
+
+    gpt4o_tokenizer = tiktoken.get_encoding("o200k_base") # GPT4o tokenizer = o200k_base 
+    gpt4o_tokens = gpt4o_tokenizer.encode(text)
+    print("Gpt4o_tokens = ", len(gpt4o_tokens))
+    print("[INFO] We use Gpt4o_tokens")
+    if len(gpt4o_tokens) > max_tokens:
+        gpt4o_tokens = gpt4o_tokens[:max_tokens]
+    
+    truncated_text = gpt4o_tokenizer.decode(gpt4o_tokens)
+    return truncated_text

@@ -1,6 +1,6 @@
 from openai import OpenAI
 import os
-import tiktoken
+
 
 OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 
@@ -8,7 +8,7 @@ client = OpenAI()
 
 
 
-menu_structure = """- You can use this kind of structure when build two-depth menus. start with 'number' is first_depth menu. start with '-' is second_depth menu.
+menu_structure = """- You can use this kind of structure when build two_depth menu. start with 'number' is first_depth menu. start with '-' is second_depth menu.
                     1. Home
                     2. Company Introduction   
                             - Company History   
@@ -70,7 +70,7 @@ def PDF_Menu_Create_G(text):
             {"role": "system", "content": """- You are the organizer of the company introduction website. 
              - Data is a company introduction letter or product introduction letter. 
              - The result values will be printed in two ways.
-             - One is to write first_depth menu with second_depth menus refer to menu_structure in assistant. The total number of second_depth menus must be 10. Don't need to write extra explaination about second_depth. the length of menus should be less than 15 letters.
+             - One is to write two_depth menu refer to menu_structure in assistant. The total number of second_depth menus must be 10. Don't need to write extra explaination about second_depth. the length of menus should be less than 15 letters.
              - The other is pick 3 keywords in the contents.
              - Write in Korean."""}, # 
             {"role": "user", "content": text},
@@ -87,19 +87,3 @@ def PDF_Menu_Create_G(text):
     )
     
     return completion
-
-def truncate_text_to_token_limit(text, max_tokens=9800):
-    # tiktoken을 사용해 텍스트의 토큰 수를 계산하고 자르기
-    gpt4_tokenizer = tiktoken.get_encoding("cl100k_base") # GPT4 tokenizer = cl100k_base
-    gpt4_tokens = gpt4_tokenizer.encode(text)
-    print("Gpt4_tokens = ", len(gpt4_tokens))
-
-    gpt4o_tokenizer = tiktoken.get_encoding("o200k_base") # GPT4o tokenizer = o200k_base 
-    gpt4o_tokens = gpt4o_tokenizer.encode(text)
-    print("Gpt4o_tokens = ", len(gpt4o_tokens))
-    print("[INFO] We use Gpt4o_tokens")
-    if len(gpt4o_tokens) > max_tokens:
-        gpt4o_tokens = gpt4o_tokens[:max_tokens]
-    
-    truncated_text = gpt4o_tokenizer.decode(gpt4o_tokens)
-    return truncated_text
