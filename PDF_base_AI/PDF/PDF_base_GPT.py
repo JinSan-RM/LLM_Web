@@ -1,5 +1,6 @@
 from openai import OpenAI
 import os
+import tiktoken
 
 
 OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
@@ -72,7 +73,7 @@ def PDF_Menu_Create_G(text):
              - The result values will be printed in two ways.
              - One is to write two_depth menu refer to menu_structure in assistant. The total number of second_depth menus must be 10. Don't need to write extra explaination about second_depth. the length of menus should be less than 15 letters.
              - The other is pick 3 keywords in the contents.
-             - Write in Korean."""}, # 
+             """}, # - Write in Korean.
             {"role": "user", "content": text},
             {"role": "assistant", "content": f"{menu_structure}"} # {content_structure}
             # ,{
@@ -86,4 +87,37 @@ def PDF_Menu_Create_G(text):
         top_p=1
     )
     
+    
     return completion
+
+def truncate_input_text_to_token_limit(text, max_tokens=9800):
+    # tiktoken을 사용해 텍스트의 토큰 수를 계산하고 자르기
+    gpt4_tokenizer = tiktoken.get_encoding("cl100k_base") # GPT4 tokenizer = cl100k_base
+    gpt4_tokens = gpt4_tokenizer.encode(text)
+    print("Input_Gpt4_tokens = ", len(gpt4_tokens))
+
+    gpt4o_tokenizer = tiktoken.get_encoding("o200k_base") # GPT4o tokenizer = o200k_base 
+    gpt4o_tokens = gpt4o_tokenizer.encode(text)
+    print("Input_Gpt4o_tokens = ", len(gpt4o_tokens))
+    print("[INFO] We use Gpt4o_tokens")
+    if len(gpt4o_tokens) > max_tokens:
+        gpt4o_tokens = gpt4o_tokens[:max_tokens]
+    
+    truncated_text = gpt4o_tokenizer.decode(gpt4o_tokens)
+    return truncated_text
+
+def count_output_token(output_data):
+    
+    # print("================= test ================")
+    # print(type(output_data))
+    # print(output_data)
+    
+    real_content = output_data.choices[0].message.content
+    
+    gpt4o_tokenizer = tiktoken.get_encoding("o200k_base") # GPT4o tokenizer = o200k_base 
+    gpt4o_tokens = gpt4o_tokenizer.encode(real_content)
+    
+    num_of_output_token = len(gpt4o_tokens)
+    print("Output_Gpt4o_tokens = ", num_of_output_token)
+    
+    return num_of_output_token

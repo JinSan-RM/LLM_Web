@@ -1,5 +1,5 @@
-from PDF.PDF_2_TEXT import PDF2TEXT, truncate_text_to_token_limit
-from PDF.PDF_base_GPT import PDF_Menu_Create_G
+from PDF.PDF_2_TEXT import PDF2TEXT
+from PDF.PDF_base_GPT import PDF_Menu_Create_G, truncate_input_text_to_token_limit, count_output_token
 from PDF.PDF_base_CLOVA import PDF_Menu_Create_C
 from fastapi import FastAPI
 import requests, json
@@ -29,11 +29,15 @@ def main(path: str, path2: str='', path3: str=''):
         
         all_text = PDF2TEXT(pdf_list)
 
-        truncated_text = truncate_text_to_token_limit(all_text)
+        truncated_text = truncate_input_text_to_token_limit(all_text)
         
         G_data = PDF_Menu_Create_G(truncated_text)
+         
+        
+        G_output_token_num = count_output_token(G_data)
+        
         # C_data = PDF_Menu_Create_C(text)
-        return {"message": "PDF 다운로드 및 처리 성공", "GPT": G_data} # "Clova":C_data
+        return {"message": "PDF 다운로드 및 처리 성공", "G_output_token_num" : G_output_token_num, "GPT": G_data} # "Clova":C_data / 
     else:
         return {"message": "PDF 다운로드 실패"}
     
