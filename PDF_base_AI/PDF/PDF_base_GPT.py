@@ -8,27 +8,34 @@ OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 client = OpenAI()
 
 
+title_structure = """- You can use this example to write down title.
+                    [Title]
+                    The example of title
+                    """
+
+keywords_structure = """- You can use this example to write down keywords.
+                    [Keywords]
+                    1. A
+                    2. B
+                    3. C
+                    """
 
 menu_structure = """- You can use this kind of structure when build two_depth menu. start with 'number' is first_depth menu. start with '-' is second_depth menu.
+                    [Two_depth Menu]
                     1. Home
                     2. Company Introduction   
                             - Company History   
                             - Company Vision   
-                            - CEO Message
+                            - CEO Message                    
                     3. Business Overview   
                             - Business Areas
                             - Business Achievements
-                            - Future Goals
-                    4. Team   
-                            - Team Members   
-                    5. Representative Contents   
-                            - Education Methodology   
-                            - Sejong Institute Content   
-                    6. Contact Us   
+                            - Future Goals 
+                    4. Contact Us
                             - Location   
                             - Phone   
-                            - Fax
-                    7. FAQs"""
+                            - FAQs
+                            - Team members"""
 
 content_structure = """ - You can use this when make contents of menues
                     1. Main
@@ -63,19 +70,23 @@ class CompletionGPT:
         self._host = host
         self._text = text
 
+
+# NOTE : Keywords와 Title을 미리 뽑고, 그 이후에 메뉴 뽑기. 그래야 메뉴로 인해서 뒤가 짤리는 현상 방지 가능
+
 def PDF_Menu_Create_G(text):
     # truncated_text = truncate_text_to_token_limit(text)
     completion = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": """- You are the organizer of the company introduction website. 
-             - Data is a company introduction letter or product introduction letter. 
-             - The result values will be printed in two ways.
-             - One is to write two_depth menu refer to menu_structure in assistant. The total number of second_depth menus must be 10. Don't need to write extra explaination about second_depth. the length of menus should be less than 15 letters.
-             - The other is pick 3 keywords in the contents.
-             """}, # - Write in Korean.
+             - Data is a company profile or company introduction. 
+             - The result values will be printed in three ways.
+             - First is the title of website.
+             - Second is pick 3 keywords in the contents.
+             - Third is to write two_depth menu refer to menu_structure in assistant. The first_depth must be 3~5. The second_depth must be 0~4. Don't need to write extra explaination about second_depth. the length of menus should be less than 15 letters.
+             - Write in Korean."""}, # 
             {"role": "user", "content": text},
-            {"role": "assistant", "content": f"{menu_structure}"} # {content_structure}
+            {"role": "assistant", "content": f"{title_structure}, {keywords_structure}, {menu_structure}"} # {content_structure}
             # ,{
             # "role": "system",
             # "content": "You will perform two tasks: 1) Extract the main keywords from the text. 2) Write a brief introduction based on the text."
